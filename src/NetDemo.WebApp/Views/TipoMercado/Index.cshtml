@@ -1,0 +1,122 @@
+@using NetDemo.Application.TipoMercado
+@model NetDemo.WebApp.ViewModels.TipoMercado.TipoMercadoIndexViewModel
+
+@{
+    ViewData["Title"] = "Tipo de Mercado";
+}
+
+<section id="tipoMercadoPage" data-endpoint="@Url.Action("Index", "TipoMercado")">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h2 mb-1">Tipo de Mercado</h1>
+        </div>
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#registrarModal">
+            Registrar
+        </button>
+    </div>
+
+    <div id="tipoMercadoMessage" class="alert d-none" role="alert" aria-live="polite"></div>
+
+    <div class="table-responsive">
+        <table id="tipoMercadoTable" class="table table-striped table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col"><span class="visually-hidden">Acciones</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tipo in Model.Items)
+                {
+                    var estadoActivo = tipo.Estado == EstadoTipoMercadoDto.Activo;
+                    <tr data-id="@tipo.Id" data-nombre="@tipo.Nombre" data-estado="@tipo.Estado">
+                        <td class="tipo-mercado-id">@tipo.Id</td>
+                        <td class="tipo-mercado-nombre">@tipo.Nombre</td>
+                        <td>
+                            <span class="badge @(estadoActivo ? "text-bg-success" : "text-bg-secondary") tipo-mercado-estado">
+                                @tipo.Estado
+                            </span>
+                        </td>
+                        <td class="text-end text-nowrap">
+                            <button class="btn btn-sm btn-outline-primary" type="button" data-action="editar"
+                                    data-bs-toggle="modal" data-bs-target="#editarModal">
+                                Editar
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" type="button" data-action="eliminar">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+                <tr id="tipoMercadoEmptyRow" class="@(Model.Items.Count == 0 ? string.Empty : "d-none")">
+                    <td colspan="4" class="text-center text-body-secondary py-4">No hay tipos de mercado registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<div class="modal fade" id="registrarModal" tabindex="-1" aria-labelledby="registrarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="registrarForm" asp-controller="TipoMercado" asp-action="Registrar" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="registrarModalLabel">Registrar tipo de mercado</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger d-none" data-form-error role="alert"></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="registrarNombre">Nombre</label>
+                        <input class="form-control" id="registrarNombre" name="Nombre" type="text" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarModal" tabindex="-1" aria-labelledby="editarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editarForm" method="post">
+                @Html.AntiForgeryToken()
+                <input id="editarId" name="Id" type="hidden" />
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="editarModalLabel">Editar tipo de mercado</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger d-none" data-form-error role="alert"></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="editarNombre">Nombre</label>
+                        <input class="form-control" id="editarNombre" name="Nombre" type="text" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="editarEstado">Estado</label>
+                        <select class="form-select" id="editarEstado" name="Estado" required>
+                            <option value="">Selecciona un estado</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/features/tipo-mercado/index.js" asp-append-version="true"></script>
+}

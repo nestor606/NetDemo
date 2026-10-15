@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+src/NetDemo.WebApp/App_Data/TipoMercado/
+.vs/
+.idea/
+*.user
+*.suo
